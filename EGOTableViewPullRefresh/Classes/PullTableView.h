@@ -71,6 +71,9 @@
 @property (nonatomic, retain) UIColor *pullBackgroundColor;
 @property (nonatomic, retain) UIColor *pullTextColor;
 
+@property (nonatomic) BOOL refreshEnabled;
+@property (nonatomic) BOOL loadMoreEnabled;
+
 /* Set to nil to hide last modified text */
 @property (nonatomic, retain) NSDate *pullLastRefreshDate;
 

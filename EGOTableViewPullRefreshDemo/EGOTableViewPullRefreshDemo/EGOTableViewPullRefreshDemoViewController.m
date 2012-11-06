@@ -33,8 +33,8 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    
     [super viewWillAppear:animated];
+    self.pullTableView.loadMoreEnabled = NO;
     if(!self.pullTableView.pullTableIsRefreshing) {
         self.pullTableView.pullTableIsRefreshing = YES;
         [self performSelector:@selector(refreshTable) withObject:nil afterDelay:3.0f];
@@ -131,4 +131,8 @@
     [self performSelector:@selector(loadMoreDataToTable) withObject:nil afterDelay:3.0f];
 }
 
+- (IBAction)changeMode:(UISegmentedControl *)sender {
+    self.pullTableView.loadMoreEnabled = (sender.selectedSegmentIndex == 0);
+    self.pullTableView.refreshEnabled = (sender.selectedSegmentIndex == 0);
+}
 @end

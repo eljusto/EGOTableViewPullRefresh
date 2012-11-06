@@ -36,6 +36,9 @@
 # pragma mark - Initialization / Deallocation
 
 @synthesize pullDelegate;
+@synthesize refreshEnabled = _refreshEnabled;
+@synthesize loadMoreEnabled = _loadMoreEnabled;
+
 
 - (id)initWithFrame:(CGRect)frame style:(UITableViewStyle)style
 {
@@ -78,6 +81,8 @@
     super.delegate = (id)delegateInterceptor;
     
     /* Status Properties */
+    _refreshEnabled = YES;
+    _loadMoreEnabled = YES;
     pullTableIsRefreshing = NO;
     pullTableIsLoadingMore = NO;
     
@@ -133,6 +138,23 @@
 }
 
 #pragma mark - Status Propreties
+
+- (void)setRefreshEnabled:(BOOL)refreshEnabled
+{
+    if (_refreshEnabled != refreshEnabled) {
+        _refreshEnabled  = refreshEnabled;
+        [refreshView setHidden:!refreshEnabled];
+    }
+}
+
+
+- (void)setLoadMoreEnabled:(BOOL)loadMoreEnabled
+{
+    if (_loadMoreEnabled != loadMoreEnabled) {
+        _loadMoreEnabled  = loadMoreEnabled;
+        [loadMoreView setHidden:!loadMoreEnabled];
+    }
+}
 
 @synthesize pullTableIsRefreshing;
 @synthesize pullTableIsLoadingMore;
@@ -214,7 +236,6 @@
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    
     [refreshView egoRefreshScrollViewDidScroll:scrollView];
     [loadMoreView egoRefreshScrollViewDidScroll:scrollView];
     
@@ -228,8 +249,8 @@
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
     
-    [refreshView egoRefreshScrollViewDidEndDragging:scrollView];
-    [loadMoreView egoRefreshScrollViewDidEndDragging:scrollView];
+    if (_refreshEnabled) [refreshView egoRefreshScrollViewDidEndDragging:scrollView];
+    if(_loadMoreEnabled) [loadMoreView egoRefreshScrollViewDidEndDragging:scrollView];
     
     // Also forward the message to the real delegate
     if ([delegateInterceptor.receiver
@@ -240,7 +261,7 @@
 
 - (void) scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    [refreshView egoRefreshScrollViewWillBeginDragging:scrollView];
+    if(_refreshEnabled) [refreshView egoRefreshScrollViewWillBeginDragging:scrollView];
     
     // Also forward the message to the real delegate
     if ([delegateInterceptor.receiver
@@ -255,8 +276,10 @@
 
 - (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view
 {
-    pullTableIsRefreshing = YES;
-    [pullDelegate pullTableViewDidTriggerRefresh:self];    
+    if (_refreshEnabled) {
+        pullTableIsRefreshing = YES;
+        [pullDelegate pullTableViewDidTriggerRefresh:self];
+    }
 }
 
 - (NSDate*)egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView*)view {
@@ -267,8 +290,10 @@
 
 - (void)loadMoreTableFooterDidTriggerLoadMore:(LoadMoreTableFooterView *)view
 {
-    pullTableIsLoadingMore = YES;
-    [pullDelegate pullTableViewDidTriggerLoadMore:self];
+    if (_loadMoreEnabled) {
+        pullTableIsLoadingMore = YES;
+        [pullDelegate pullTableViewDidTriggerLoadMore:self];
+    }
 }
 
 

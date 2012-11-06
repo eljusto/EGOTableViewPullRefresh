@@ -13,6 +13,7 @@
     PullTableView *pullTableView;
 }
 
+- (IBAction)changeMode:(UISegmentedControl *)sender;
 
 @property (nonatomic, retain) IBOutlet PullTableView *pullTableView;
 @end
